@@ -1,7 +1,7 @@
 package cluster
 
 import (
-	"goexample/restapi"
+	"do/restapi"
 	"io/ioutil"
 	"log"
 )

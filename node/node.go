@@ -4,8 +4,8 @@ import (
 	"os"
 	"log"
 	"net/http"
-	"goexample/cluster"
-	"goexample/restapi"
+	"do/cluster"
+	"do/restapi"
 )
 
 

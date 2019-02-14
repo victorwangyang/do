@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"goexample/cluster"
-	"goexample/restapi"
+	"do/cluster"
+	"do/restapi"
 )
 
 func masterHandler(w http.ResponseWriter, r *http.Request) {

@@ -2,7 +2,7 @@ package cmd
 
 import(
 	"fmt"
-	"goexample/cluster"
+	"do/cluster"
 	"github.com/spf13/cobra"
 )
 

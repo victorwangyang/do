@@ -1,9 +1,9 @@
 package restapi
 
 import (
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
 //InitRestSvr is to prepare resource of path/func and start to listen at the addr

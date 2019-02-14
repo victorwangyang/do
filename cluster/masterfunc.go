@@ -1,14 +1,14 @@
 package cluster
 
 import (
-	yaml "gopkg.in/yaml.v2"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"os"
-	"os/exec"
-	"strconv"
+	"log"
+	"io/ioutil"
 	"syscall"
+	"net/http"
+	"strconv"	
+	"os/exec"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // StartMasterDeamon is to exec a master process

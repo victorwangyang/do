@@ -1,7 +1,7 @@
 package main
 
 import (
-	"goexample/cmd"
+	"do/cmd"
 )
 
 func main() {
