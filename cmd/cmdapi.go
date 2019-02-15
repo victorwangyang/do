@@ -1,5 +1,6 @@
 package cmd
 
+
 import (
 	"os"
 	"log"
@@ -7,23 +8,36 @@ import (
 	"syscall"
 	"strconv"	
 	"os/exec"
-	"do/cluster"
 	yaml "gopkg.in/yaml.v2"
 )
 
-// YamlClusterConfig is struct of cluster config
+//Exe and status position file
+const (
+	MasterExePosition = "../master/master"
+	StatusPosition = "./status.yaml"
+	NodeExePosition = "../node/node"
+	DefaultNodePort   = 500
+)
+
+// YamlClusterConfig is struct of cluster config file
 type YamlClusterConfig struct {
 	ClusterNumber   string   `yaml:"clusterNumber"`
 	MachineNamelist []string `yaml:"machineNamelist"`
 }
 
-// YamlClusterStatus is struct of cluster status
+// YamlClusterStatus is struct of cluster status file
 type YamlClusterStatus struct{
-	MasterPID    string   `yaml:"masterpid"`
-	NodePID       []string `yaml:"nodepid"`
+	MasterPID     string   `yaml:"masterpid"`
 	NodeNumber    string   `yaml:"nodenumber"`
+	Nodes        []YamlNodeStatus `yaml:"nodestatus"`
 }
 
+// YamlNodeStatus is struct of cluster status file
+type YamlNodeStatus struct {
+	NodePID       string `yaml:"nodepid"`
+	NodePort      string `yaml:"nodeport"`
+	NodeName      string `yaml:"nodename"`
+}
 
 // StartCluster is to start a cluster
 func StartCluster(yamlfile string) {
@@ -44,11 +58,12 @@ func StartCluster(yamlfile string) {
 	status := new(YamlClusterStatus)
 	status.NodeNumber = config.ClusterNumber
 	clusterNumber,_ := strconv.Atoi(config.ClusterNumber)
-	status.NodePID = make([]string,clusterNumber,clusterNumber)
+	status.Nodes = make([]YamlNodeStatus,clusterNumber,clusterNumber)
+
 
 	// start Master process and start Nodes process ,finally save status to file
 	var Args = []string{" of Do Project"}
-	cmd := exec.Command(cluster.MasterExePosition, Args...)
+	cmd := exec.Command(MasterExePosition, Args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -71,8 +86,8 @@ func KillCluster() {
 
 	// kill nodes first
 	for i := 0; i < nodeNumber; i++ {
-		log.Printf("Node Deamon(PID:%s)  Stopping......", status.NodePID[i])
-		Pid,_:= strconv.Atoi(status.NodePID[i])
+		log.Printf("Node Deamon(PID:%s)  Stopping......", status.Nodes[i].NodePID)
+		Pid,_:= strconv.Atoi(status.Nodes[i].NodePID)
 		syscall.Kill(Pid, syscall.SIGKILL)
 	}
 
@@ -83,6 +98,7 @@ func KillCluster() {
 	return
 }
 
+
 func saveClusterStatus(status *YamlClusterStatus) {
 
 	buf, err := yaml.Marshal(&status)
@@ -90,7 +106,7 @@ func saveClusterStatus(status *YamlClusterStatus) {
 		log.Fatalf("error: %v", err)
 	}
 
-	err = ioutil.WriteFile(cluster.StatusPosition, buf, 0x777)
+	err = ioutil.WriteFile(StatusPosition, buf, 0x777)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -99,7 +115,7 @@ func saveClusterStatus(status *YamlClusterStatus) {
 
 func getClusterStatus(status *YamlClusterStatus) {
 
-	buf, err := ioutil.ReadFile(cluster.StatusPosition)
+	buf, err := ioutil.ReadFile(StatusPosition)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -117,17 +133,20 @@ func startNodesDeamon(status *YamlClusterStatus,config *YamlClusterConfig){
 
 	for i := 0; i < nodeNumber; i++ {
 
-		port := strconv.Itoa(cluster.DefaultNodePort + i)
-		var Args = []string{config.MachineNamelist[i], port}
+	
+		status.Nodes[i].NodeName = config.MachineNamelist[i]
+		status.Nodes[i].NodePort = strconv.Itoa(DefaultNodePort + i)
+	
+		var Args = []string{config.MachineNamelist[i], status.Nodes[i].NodePort}
 
-		cmd := exec.Command(cluster.NodeExePosition, Args...) 
+		cmd := exec.Command(NodeExePosition, Args...) 
 		cmd.Stdin = os.Stdin                 
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		cmd.Start() 
 
-		status.NodePID[i] = strconv.Itoa(cmd.Process.Pid)
-		log.Printf("Node Deamon(PID:%s)  Starting......", status.NodePID[i])
+		status.Nodes[i].NodePID = strconv.Itoa(cmd.Process.Pid)
+		log.Printf("Node Deamon(PID:%s)  Starting......", status.Nodes[i].NodePID)
 	}
 	return
 }
