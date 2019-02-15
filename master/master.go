@@ -1,32 +1,29 @@
 package main
 
 import (
+	"do/cmd"
+	"fmt"
 	"log"
 	"net/http"
 	"do/cluster"
 	"do/restapi"
+	"encoding/json"
 )
 
-func masterHandler(w http.ResponseWriter, r *http.Request) {
+func apiV1ClusterGet(w http.ResponseWriter, r *http.Request) {
 
-	switch r.Method {
-	case "GET":
-		log.Println("GET.....from Cli")
-	case "POST":
-		{
-			cluster.MasterProcessRequestFromClient(r)
-		}
-	default:
-		log.Println("DEFAULT.......")
-
-	} 
-
+	buf,_ := json.MarshalIndent(cluster.GCluster,"","")
+	fmt.Fprintf(w, string(buf))
+	log.Println(buf)
 }
 
 func main() {
 
-	restapi.InitRestSvr(cluster.ClusterDirectory, 
-						cluster.MasterPort,
-						 masterHandler)
+	cluster.InitClusterInfo(cmd.StatusPosition)
+
+
+	restapi.InitRestSvr(cmd.ClusterGet, 
+						cmd.MasterPort,
+						apiV1ClusterGet)
 
 }

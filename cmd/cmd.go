@@ -37,8 +37,19 @@ func InitCmd(){
 			KillCluster()
 		},
 	}
+
+	//Define getcluster-command to stop a Master
+	var cmdGetcluster = &cobra.Command{
+		Use:   "getcluster ",
+		Short: "get cluster info",
+		Long:  `getcluster is to get cluster nodes info`,
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			GetCluster()
+		},
+	}
 	
 	var rootCmd = &cobra.Command{Use: "do"}
-	rootCmd.AddCommand(cmdKill,cmdStart)
+	rootCmd.AddCommand(cmdKill,cmdStart,cmdGetcluster)
 	rootCmd.Execute()
 }

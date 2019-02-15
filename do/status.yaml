@@ -1,6 +1,12 @@
-masterpid: "5333"
-nodepid:
-- "5334"
-- "5335"
-- "5336"
+masterpid: "15079"
 nodenumber: "3"
+nodestatus:
+- nodepid: "15080"
+  nodeport: "500"
+  nodename: phy1
+- nodepid: "15081"
+  nodeport: "501"
+  nodename: phy2
+- nodepid: "15082"
+  nodeport: "502"
+  nodename: phy3
