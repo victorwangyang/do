@@ -1,29 +1,20 @@
 package cluster
 
-//InitPort is starting number of Nodes port
-//ClusterAddr is address and port of visiting mater
+// constant of cluster
 const (
-
-
 	MasterAddr       = "http://localhost"
 	MasterPort       = "8085"
 	ClusterDirectory = "/cluster"
 
 	MasterExePosition = "../master/master"
-	MasterIniPosition = "../master/masterpid.ini"
+	StatusPosition = "./status.yaml"
 
 	NodeExePosition = "../node/node"
 
 	NodeAddr       = "http://localhost"
-	InitNodePort   = 500
+	DefaultNodePort   = 500
 	NodeDirectory = "/node"
 )
-
-// Yamlcluster is struct of cluster
-type Yamlcluster struct {
-	ClusterNumber   string   `yaml:"clusterNumber"`
-	MachineNamelist []string `yaml:"machineNamelist"`
-}
 
 // NodesInfo to record nodes name,port,PID information of Cluster
 type NodesInfo struct {
@@ -35,3 +26,8 @@ type NodesInfo struct {
 
 //Nodes is slice instance of NodesInfo
 var Nodes []NodesInfo
+
+func initNodes(len int) {
+
+	Nodes = make([]NodesInfo, len, len)
+}
