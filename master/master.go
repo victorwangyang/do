@@ -3,7 +3,6 @@ package main
 import (
 	"do/cmd"
 	"fmt"
-	"log"
 	"net/http"
 	"do/cluster"
 	"do/restapi"
