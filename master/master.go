@@ -14,7 +14,6 @@ func apiV1ClusterGet(w http.ResponseWriter, r *http.Request) {
 
 	buf,_ := json.MarshalIndent(cluster.GCluster,"","")
 	fmt.Fprintf(w, string(buf))
-	log.Println(buf)
 }
 
 func main() {
