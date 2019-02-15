@@ -2,7 +2,7 @@ package cmd
 
 import(
 	"fmt"
-	"do/cluster"
+//	"do/cluster"
 	"github.com/spf13/cobra"
 )
 
@@ -18,9 +18,14 @@ func InitCmd(){
 		Long:  `create is for starting master server to listen to cli`,
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			cluster.StartMasterDeamon()
+			if fileName == "" {
+				fmt.Println("Error: Yaml file is needed")
+				return
+			}
+			StartCluster(fileName)
 		},
 	}
+	cmdStart.Flags().StringVarP(&fileName, "file", "f", "", "file to start the cluster")
 
 	 //Define Kill-command to stop a Master
 	 var cmdKill = &cobra.Command{
@@ -29,40 +34,11 @@ func InitCmd(){
 		Long:  `create is for stopping master server to listen to cli`,
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
-			cluster.KillMasterDeamon()
+			KillCluster()
 		},
 	}
 	
-    //Define Create-command to creat a cluster
-	var cmdCreate = &cobra.Command{
-		Use:   "create ",
-		Short: "create demo cluster by yaml",
-		Long:  `create is for creating demo cluster,then you can deploy apps`,
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-            if fileName == "" {
-				fmt.Println("Error: Yaml file is needed")
-				return
-			}
-			cluster.CreateCluster(fileName)
-		},
-	}
-    cmdCreate.Flags().StringVarP(&fileName, "file", "f", "", "file to create the cluster")
-
-
-    //Define Delete-command to delete a cluster
-	var cmdDelete = &cobra.Command{
-		Use:   "delete ",
-		Short: "delete demo cluster ",
-		Long:  `delete is for deleting demo cluster,then you can finish`,
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-
-		//	createcluster.Delete()
-		},
-	}
- 
 	var rootCmd = &cobra.Command{Use: "do"}
-	rootCmd.AddCommand(cmdKill,cmdStart,cmdCreate,cmdDelete)
+	rootCmd.AddCommand(cmdKill,cmdStart)
 	rootCmd.Execute()
 }
